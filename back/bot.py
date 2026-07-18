@@ -168,9 +168,9 @@ try :
         espera = final - inicio
         enfriamiento = 60 - espera
         if enfriamiento > 0 : 
-            time.sleep(enfriamiento)
-
-        print("la cosa ta muy calmaa patron")
+            time.sleep(enfriamiento / 2)
+            print("la cosa ta muy calmaa patron")
+            time.sleep(enfriamiento / 2)
 
 #apagamos el bucle con un ctrl + c
 except KeyboardInterrupt : 
