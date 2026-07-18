@@ -38,7 +38,7 @@ def obtener_velas():
         30 #cantidad de velas a traer
     )
 
-    if velas != None : 
+    if velas is not None and len(velas) > 0 : 
         panel = pd.DataFrame(velas)
         panel["time"] = pd.to_datetime(panel["time"], unit="s")
         panel.set_index("time", inplace=True)
