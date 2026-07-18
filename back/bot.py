@@ -11,7 +11,7 @@ import time
 "1. la conexion con metatrader5 "
 # ==============================
 load_dotenv()
-login = os.getenv("ID")
+login = int(os.getenv("ID"))
 password = os.getenv("contraseña")
 server = os.getenv("XMGlobal-MT5 9")
 
