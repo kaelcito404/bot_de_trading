@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 import MetaTrader5 as mt5
 import pandas as pd
 from ta.trend import EMAIndicator
@@ -9,11 +10,15 @@ import time
 # ==============================
 "1. la conexion con metatrader5 "
 # ==============================
+load_dotenv()
+login = os.getenv("ID")
+password = os.getenv("contraseña")
+server = os.getenv("XMGlobal-MT5 9")
 
 if not mt5.initialize(
-    login = "",
-    password = "",
-    server = ""
+    login = login,
+    password = password,
+    server = server
 ) : 
     print("hubo un error al iniciar la conexion. error :",mt5.last_error())
     quit()
