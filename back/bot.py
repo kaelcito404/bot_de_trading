@@ -12,8 +12,8 @@ import time
 # ==============================
 load_dotenv()
 login = int(os.getenv("ID"))
-password = os.getenv("contraseña")
-server = os.getenv("XMGlobal-MT5 9")
+password = os.getenv("contrasena")
+server = os.getenv("servidor")
 
 if not mt5.initialize(
     login = login,
