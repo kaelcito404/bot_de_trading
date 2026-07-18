@@ -32,20 +32,21 @@ else :
 
 def obtener_velas():
     velas = mt5.copy_rates_from_pos(
-        symbol = "BTCUSD",
-        timeframe = mt5.TIMEFRAME_M15,
-        start_pos = 0,
-        count = 100
+        "BTCUSD", #mercado
+        mt5.TIMEFRAME_M15, #temporalidad
+        0, #inicio
+        30 #cantidad de velas a traer
     )
 
     if velas != None : 
         panel = pd.DataFrame(velas)
         panel["time"] = pd.to_datetime(panel["time"], unit="s")
         panel.set_index("time", inplace=True)
+        return panel
     else : 
         print(f"error : {mt5.last_error()}")
         mt5.quit()
-    return panel
+        return None
 
 # ==============================
 "3.los indicadores"
