@@ -80,7 +80,7 @@ def comprar(atr) :
 
     lote = 0.01
     take_profit = precio + 10
-    stop_loss = precio - 5
+    stop_loss = precio - 10
 
     #la orden a mandar
     request = {
@@ -106,7 +106,7 @@ def vender(atr) :
 
     lote = 0.01
     take_profit = precio - 10
-    stop_loss = precio + 5
+    stop_loss = precio + 10
 
     #la orden
     request = {
