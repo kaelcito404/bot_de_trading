@@ -32,7 +32,7 @@ else :
 
 def obtener_velas():
     velas = mt5.copy_rates_from_pos(
-        "BTCUSD", #mercado
+        "GOLD", #mercado
         mt5.TIMEFRAME_M15, #temporalidad
         0, #inicio
         30 #cantidad de velas a traer
@@ -75,23 +75,20 @@ def cruce(panel) :
 # ==============================
 def comprar(atr) : 
     #variables necesarias
-    tick_bitcoin = mt5.symbol_info_tick("BTCUSD")
-    tick_euro_dolar = mt5.symbol_info_tick("EURUSD")
-
-    bitcoin = tick_bitcoin.ask
-    euro_dolar = tick_euro_dolar.ask
+    mercado = mt5.symbol_info_tick("GOLD")
+    precio = mercado.ask 
 
     lote = 0.01
-    take_profit = ((20 * euro_dolar) / lote) + bitcoin
-    stop_loss = bitcoin - (atr * 2)
+    take_profit = precio + 10
+    stop_loss = precio - 5
 
     #la orden a mandar
     request = {
         "action" : mt5.TRADE_ACTION_DEAL,
-        "symbol" : "BTCUSD",
+        "symbol" : "GOLD",
         "volume" : lote,
+        "price" : precio,
         "type" : mt5.ORDER_TYPE_BUY,
-        "price" : bitcoin,
         "tp" : take_profit,
         "sl" : stop_loss,
         "deviation" : 40,
@@ -104,23 +101,20 @@ def comprar(atr) :
 
 def vender(atr) : 
     #variables necesarias
-    tick_bitcoin = mt5.symbol_info_tick("BTCUSD")
-    tick_euro_dolar = mt5.symbol_info_tick("EURUSD")
-
-    bitcoin = tick_bitcoin.bid
-    euro_dolar = tick_euro_dolar.ask
+    mercado = mt5.symbol_info_tick("GOLD")
+    precio = mercado.bid
 
     lote = 0.01
-    take_profit = bitcoin - ((20* euro_dolar) / lote)
-    stop_loss = bitcoin + (atr *2)
+    take_profit = precio - 10
+    stop_loss = precio + 5
 
     #la orden
     request = {
         "action" : mt5.TRADE_ACTION_DEAL,
-        "symbol" : "BTCUSD",
+        "symbol" : "GOLD",
         "volume" : lote,
         "type" : mt5.ORDER_TYPE_SELL,
-        "price" : bitcoin,
+        "price" : precio,
         "tp" : take_profit,
         "sl" : stop_loss,
         "deviation" : 40,
