@@ -1,4 +1,3 @@
-import os
 import MetaTrader5 as mt5
 import pandas as pd
 from ta.trend import EMAIndicator
@@ -27,20 +26,21 @@ else :
 
 def obtener_velas():
     velas = mt5.copy_rates_from_pos(
-        symbol = "BTCUSD",
-        timeframe = mt5.TIMEFRAME_M15,
-        start_pos = 0,
-        count = 100
+        "GOLD", #mercado
+        mt5.TIMEFRAME_M15, #temporalidad
+        0, #inicio
+        30 #cantidad de velas a traer
     )
 
-    if velas != None : 
+    if velas is not None and len(velas) > 0 : 
         panel = pd.DataFrame(velas)
         panel["time"] = pd.to_datetime(panel["time"], unit="s")
         panel.set_index("time", inplace=True)
+        return panel
     else : 
         print(f"error : {mt5.last_error()}")
         mt5.quit()
-    return panel
+        return None
 
 # ==============================
 "3.los indicadores"
@@ -67,25 +67,23 @@ def cruce(panel) :
 # ==============================
 "4.las operaciones"
 # ==============================
+
 def comprar(atr) : 
     #variables necesarias
-    tick_bitcoin = mt5.symbol_info_tick("BTCUSD")
-    tick_euro_dolar = mt5.symbol_info_tick("EURUSD")
-
-    bitcoin = tick_bitcoin.ask
-    euro_dolar = tick_euro_dolar.ask
+    mercado = mt5.symbol_info_tick("GOLD")
+    precio = mercado.ask 
 
     lote = 0.01
-    take_profit = ((20 * euro_dolar) / lote) + bitcoin
-    stop_loss = bitcoin - (atr * 2)
+    take_profit = precio + 10
+    stop_loss = precio - 10
 
     #la orden a mandar
     request = {
         "action" : mt5.TRADE_ACTION_DEAL,
-        "symbol" : "BTCUSD",
+        "symbol" : "GOLD",
         "volume" : lote,
+        "price" : precio,
         "type" : mt5.ORDER_TYPE_BUY,
-        "price" : bitcoin,
         "tp" : take_profit,
         "sl" : stop_loss,
         "deviation" : 40,
@@ -98,23 +96,20 @@ def comprar(atr) :
 
 def vender(atr) : 
     #variables necesarias
-    tick_bitcoin = mt5.symbol_info_tick("BTCUSD")
-    tick_euro_dolar = mt5.symbol_info_tick("EURUSD")
-
-    bitcoin = tick_bitcoin.bid
-    euro_dolar = tick_euro_dolar.ask
+    mercado = mt5.symbol_info_tick("GOLD")
+    precio = mercado.bid
 
     lote = 0.01
-    take_profit = bitcoin - ((20* euro_dolar) / lote)
-    stop_loss = bitcoin + (atr *2)
+    take_profit = precio - 10
+    stop_loss = precio + 10
 
     #la orden
     request = {
         "action" : mt5.TRADE_ACTION_DEAL,
-        "symbol" : "BTCUSD",
+        "symbol" : "GOLD",
         "volume" : lote,
         "type" : mt5.ORDER_TYPE_SELL,
-        "price" : bitcoin,
+        "price" : precio,
         "tp" : take_profit,
         "sl" : stop_loss,
         "deviation" : 40,
