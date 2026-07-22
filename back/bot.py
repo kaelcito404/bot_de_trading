@@ -171,12 +171,12 @@ def obener_tendencia() :
         elif posicion.type == mt5.ORDER_TYPE_SELL:
             estado = "venta"
     return estado
+
 # ==============================
-"6. el bucle"
+"7. el bucle"
 # ==============================
-posicion = "nada"
 try : 
-    while 1 > 0 : 
+    while True : 
         #empezamos el cronometro
         inicio = time.time()
         print("empezando a analizar")
