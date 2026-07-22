@@ -126,8 +126,55 @@ def vender(atr) :
     return mandar_venta
 
 # ==============================
-"5. el bucle"
+"5. cerrar operaciones"
 # ==============================
+def cerrar_operacion():
+    mercado = mt5.symbol_info_tick(symbol = "GOLD")
+    operaciones = mt5.positions_get("GOLD")
+
+    if operaciones is None or len(operaciones) == 0 :
+        print("no hay operaciones abiertas")
+    
+    else : 
+        for posicion in operaciones :
+            if posicion.type == mt5.ORDER_TYPE_BUY : 
+                accion = mt5.ORDER_TYPE_SELL
+                precio = mercado.bid
+            else : 
+                accion = mt5.ORDER_TYPE_BUY
+                precio = mercado.ask
+
+        request = {
+        "action" : mt5.TRADE_ACTION_DEAL,
+        "symbol" : "GOLD",
+        "volume" : posicion.volume,
+        "type" : accion,
+        "position" : posicion.ticket,
+        "price" : precio,
+        "type_filling" : mt5.ORDER_FILLING_IOC 
+        }
+        mt5.order_send(request)
+        print(f"operacion {posicion.ticket} cerrada con exito")
+
+# ==============================
+"6. la tendencia actual"
+# ==============================
+def obener_tendencia() : 
+    ticket = mt5.positions_get(symbol = "GOLD")
+    if ticket is None or len(ticket) == 0 : 
+        estado = "vacio"
+        return estado
+    
+    for posicion in ticket : 
+        if posicion.type == mt5.ORDER_TYPE_BUY:
+            estado = "compra"
+        elif posicion.type == mt5.ORDER_TYPE_SELL:
+            estado = "venta"
+    return estado
+# ==============================
+"6. el bucle"
+# ==============================
+posicion = "nada"
 try : 
     while 1 > 0 : 
         #empezamos el cronometro
@@ -137,24 +184,43 @@ try :
         #llamamos a las funciones
         panel = obtener_velas()
         alcista, bajista, rsi_compra, rsi_venta, valor_atr = cruce(panel)
-
-        #las condiciones
+        
+        posicion = obener_tendencia()
+        #==========
+        #__comprar__
+        #==========
         if alcista and rsi_compra : 
-            mandar_compra = comprar(valor_atr)
-            #verificamos que no hubo errores
-            if mandar_compra.retcode == mt5.TRADE_RETCODE_DONE:
-                print("operacion mandada con exito")
+            if posicion == "compra" : 
+                pass
+                print("ya hay una operacion abierta")
             else : 
-                print(f"hubo un error. error : {mandar_compra.comment}")
-    
+                if posicion  == "venta" : 
+                    cerrar_operacion()
+                mandar_compra = comprar(valor_atr)
+                #verificamos que no hubo errores
+                if mandar_compra.retcode == mt5.TRADE_RETCODE_DONE:
+                    print("operacion mandada con exito")
+                    posicion = "compra"
+                else : 
+                    print(f"hubo un error. error : {mandar_compra.comment}")
+
+        #==========
+        #__VENDER__
+        #==========
         elif bajista and rsi_venta :
-            mandar_venta = vender(valor_atr)
-            #verificacion
-            if mandar_venta.retcode == mt5.TRADE_RETCODE_DONE:
-                print("operacion mandada con exito")
-            else : 
-                print(f"hubo un error. error : {mandar_venta.comment}")
-    
+            if posicion == 'venta' :
+                pass
+                print("ya hay una operacion abierta")
+            else :
+                if posicion == "compra" : 
+                    cerrar_operacion()
+                mandar_venta = vender(valor_atr)
+                #verificacion
+                if mandar_venta.retcode == mt5.TRADE_RETCODE_DONE:
+                    print("operacion mandada con exito")
+                    posicion = 'venta'
+                else : 
+                    print(f"hubo un error. error : {mandar_venta.comment}")
         #terminamos el cronometro
         final = time.time()
 
